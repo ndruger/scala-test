@@ -1,13 +1,18 @@
-import org.scalatest._
-import org.scalatest.selenium._
+import org.scalatest.selenium.Chrome
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.Matchers
+import org.scalatest.FlatSpec
 
-
-class WebDriverTestSpec extends FlatSpec with Matchers with Chrome {
+abstract class WebDriverTestSpec extends FlatSpec with Matchers with Chrome with BeforeAndAfterAll {
 
   val host = "http://localhost:3000/"
 
+  override def beforeAll() {
+    implicitlyWait(Span(5, Seconds))
+  }
+  
   implicit class MyElement(self: Element) {
     def click(): Unit = clickOn(self)
   }
@@ -16,8 +21,11 @@ class WebDriverTestSpec extends FlatSpec with Matchers with Chrome {
     find(cssSelector(css)).get
   }
   
+}
+
+class AsyncSampleSpec extends WebDriverTestSpec {
+
   "button" should "create result element" in {
-    implicitlyWait(Span(5, Seconds))
 
     go to (host + "index.html")
     pageTitle should be ("test_title")
