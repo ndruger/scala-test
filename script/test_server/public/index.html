@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test_title</title>
+  </head>
+  <body>
+    <button>button</button>
+    <div class="test">neko</div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+      function showResult() {
+        $(document.body).append(
+          $('<div>').attr({
+            'class': 'result'
+          }).text('result_text')
+        );
+      }
+      
+      $(document).ready(function() {
+        $('button').on('click', function() {
+          setTimeout(showResult, 1000);
+        });
+      });
+    </script>
+  </body>
+</html>
+

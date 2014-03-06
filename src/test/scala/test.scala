@@ -1,18 +1,19 @@
 import org.scalatest._
-import org.scalatest.selenium.WebBrowser
 import org.scalatest.selenium._
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import concurrent.Eventually._
+import org.scalatest.time.Span
+import org.scalatest.time.Seconds
 
-class BlogSpec extends FlatSpec with ShouldMatchers with WebBrowser {
+class WebDriverTestSpec extends FlatSpec with Matchers with Chrome {
 
-  implicit val webDriver: WebDriver = new HtmlUnitDriver
+  val host = "http://localhost:3000/"
 
-  val host = "http://localhost/"
+  "button" should "create result element" in {
+    implicitlyWait(Span(5, Seconds))
 
-  "The blog app home page" should "have the correct title" in {
     go to (host + "index.html")
-    eventually { pageTitle should be ("") }
+    pageTitle should be ("test_title")
+
+    click on cssSelector("button")
+    find(cssSelector(".result")).get.text should be ("result_text")
   }
 }
