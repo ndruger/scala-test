@@ -1,19 +1,23 @@
-import org.scalatest.selenium.Chrome
-import org.scalatest.time.Span
-import org.scalatest.time.Seconds
+import org.scalatest.selenium.{Chrome, Firefox}
+import org.scalatest.time.{Span, Seconds, Millis}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.Matchers
 import org.scalatest.FlatSpec
 
-abstract class WebDriverTestSpec extends FlatSpec with Matchers with Chrome with BeforeAndAfterAll {
+import org.scalatest.concurrent.Eventually
+
+abstract class WebDriverTestSpec extends FlatSpec with Matchers with Chrome with BeforeAndAfterAll with Eventually {
 
   val host = "http://localhost:3000/"
+
+  implicit override val patienceConfig =
+    PatienceConfig(timeout = Span(2, Seconds), interval = Span(5, Millis))    
 
   override def beforeAll() {
     implicitlyWait(Span(5, Seconds))
   }
   
-  implicit class MyElement(self: Element) {
+  implicit class TestElement(self: Element) {
     def click(): Unit = clickOn(self)
   }
   
@@ -24,13 +28,12 @@ abstract class WebDriverTestSpec extends FlatSpec with Matchers with Chrome with
 }
 
 class AsyncSampleSpec extends WebDriverTestSpec {
-
   "button" should "create result element" in {
 
-    go to (host + "index.html")
+    go to (s"${host}index.html")
     pageTitle should be ("test_title")
 
     cssFind("button").click()
-    cssFind(".result").text should be ("result_text")
+    eventually { cssFind(".result").text should be ("result_text") }
   }
 }
